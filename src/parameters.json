@@ -1,0 +1,34 @@
+{
+  "threshold": 0.9,
+  "init_value": 100000,
+  "paths": {
+      "origin_5_minute_data": "..\\data\\A50_5minute_data",
+      "end_date_of_data": "2022-04-06",
+      "merged_origin_5_minute_data": "..\\data\\merged_origin_5_minute_data\\merged_origin_5_minute_data.csv",
+      "index_path": "..\\data\\A50.csv",
+      "correlation_dir": "..\\data\\correlation",
+      "ADF_results": "..\\data\\ADF_results",
+      "spread_path": "..\\data\\correlation_higher_than_0.9\\spread\\spread.csv",
+      "CointeGration": {
+        "root_dir": "..//data//xiezheng",
+        "strategy_dir": "..//data//xiezheng//correlation_higher_than_{}",
+        "chosed_stock_relative_path": "chosed_stock.csv",
+        "CointRes_relative_path": "CointRes.csv",
+        "correlation_relative_path": "correlation.csv",
+        "ADF_results_relative_dir": "ADF_for_minute_data",
+        "residual_relative_dir": "residual",
+        "spread_relative_dir": "spread"
+      },
+      "PCA": {
+        "start_date": "2021-10-08",
+        "end_date": "2022-04-06",
+        "strategy_dir": "..//data//PCA//",
+        "PAC_relative_results": "PAC_results",
+        "OLS_relative_results": "OLS",
+        "spread_relative_dir": "spread",
+        "delete_stocks" : ["601728.XSHG","601995.XSHG"],
+        "trade_record_relative_dir": "trade_record"
+      }
+  }
+
+}
