@@ -112,7 +112,7 @@ def model_forcast():
     spread_path = r"F:\python_project\highFrequency\data\xiezheng\correlation_higher_than_0.9\spread\600000.XSHG_601336.XSHG_spread.csv"
     spread_df = pd.read_csv(spread_path, index_col=0)
     # spread_df.index = pd.DatetimeIndex(spread_df.index.to_list())
-    am = arch_model(spread_df["ARMA_resid_square"])  # 默认模型为GARCH（1，1）
+    am = arch_model(spread_df["ARMA_resid"])  # 默认模型为GARCH（1，1）
     index = spread_df.index
     end_loc = np.where(index >= '2022-04-06 09:35:00')[0].min()
     for i in range(48):
