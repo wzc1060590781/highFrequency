@@ -151,16 +151,16 @@ class CointeGration():
         # 浦发银行
         firstStock = "600000.XSHG"
         # 新华保险
-        secondStock = "600050.XSHG"
+        secondStock = "601336.XSHG"
         residual_relative_dir = self.CointeGration_paramters["residual_relative_dir"]
         residual_dir = os.path.join(self.strategy_dir, residual_relative_dir)
         beta_alpha_path = os.path.join(residual_dir, "beta_alpha_df.csv")
         alpha_beta_df = pd.read_csv(beta_alpha_path,index_col=0)
         merged_origin_data_path = self.parameters["paths"]["merged_origin_5_minute_data"]
-        minute_data_df = pd.read_csv(merged_origin_data_path, index_col=0)
+        minute_data_df = pd.read_csv(merged_origin_data_path, index_col=0).loc["2021-10-08 09:35:00":]
         beta = alpha_beta_df.loc[firstStock+"_"+secondStock]["beta"]
         spread = minute_data_df[secondStock] - beta* minute_data_df[firstStock]
-        Mspread = spread - np.mean(spread)
+        Mspread = spread - np.mean(spread.loc["2021-10-08 09:35:00":"2022-04-06 15:00:00"])
         Mspread_df = pd.DataFrame(index=Mspread.index)
         Mspread_df["spread"] = spread
         Mspread_df["Mspread"] = Mspread
@@ -215,4 +215,5 @@ if __name__ == '__main__':
     # caculateSpread(0.9)
     # plot_name()
     # plot(threshold=0.9)
-    caculate_pecentile()
+    cg = CointeGration(parameters,0.9)
+    cg.caculateSpread()

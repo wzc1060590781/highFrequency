@@ -52,7 +52,15 @@ def delete_stock(stock,parameters):
 
 
 if __name__ == '__main__':
-    mergeOrigin5minuteData2()
+    path = "F:\python_project\highFrequency\data\merged_origin_5_minute_data\merged_origin_5_minute_data.csv"
+    path2 = r"C:\Users\Administrator\Desktop\merged_data.csv"
+    df = pd.read_csv(path,index_col=0)
+    df2 = pd.read_csv(path2,index_col=0)
+    df = pd.concat([df,df2])
+    df = df[~df.index.duplicated(keep='first')]
+    print(df.to_csv(path))
+
+    # mergeOrigin5minuteData2()
     # parameters_path = r"./parameters.json"
     # with open(parameters_path, encoding="utf-8") as f:
     #     parameters = json.load(f)
