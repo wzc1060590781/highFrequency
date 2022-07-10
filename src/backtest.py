@@ -17,15 +17,16 @@ def trade(parameters):
     secondStock = "601336.XSHG"
     beta = 6.34160734408322
     tax = 0.001
-    merged_origin_5_minute_data = parameters["paths"]["merged_origin_5_minute_data"]
-    merged_origin_5_minute_data_path = os.path.join(merged_origin_5_minute_data,"2022-04-06.csv")
-    minute_data_df = pd.read_csv(merged_origin_5_minute_data_path,index_col=0)
-    account,trade_record = init(minute_data_df.index,parameters)
-    spread_df = pd.read_csv(parameters["paths"]["spread_path"],index_col=0)
+    # merged_origin_5_minute_data = parameters["paths"]["merged_origin_5_minute_data"]
+    merged_origin_data_path = parameters["paths"]["merged_origin_5_minute_data"]
+    minute_data_df = pd.read_csv(merged_origin_data_path,index_col=0)
+    spread_path = r"F:\python_project\highFrequency\data\xiezheng\correlation_higher_than_0.9\spread\600000.XSHG_601336.XSHG_spread.csv"
+    spread_df = pd.read_csv(spread_path,index_col=0)
+    account,trade_record = init(spread_df.index,parameters)
     spread_df[firstStock]  = minute_data_df[firstStock]
     spread_df[secondStock]  = minute_data_df[secondStock]
     theta = caculateMspreadDivideStd(threshold)
-    commition = 0.0001
+    commition = 0.0002
     for i in range(len(spread_df)):
         row = spread_df.iloc[i]
         date_str_i = spread_df.index.to_list()[i]
@@ -45,7 +46,6 @@ def trade(parameters):
         # 三种状态1、空仓；2、持有stock_1多头；3、持有stock_2多头
         # 空仓
         if len(holding_stock_df) == 0:
-
             if Mspread > 0.75 * theta and Mspread < 2*theta:
                 first_stock_direction = "long"
                 second_stock_direction = "short"
@@ -81,9 +81,11 @@ def trade(parameters):
                 else:
                     holding_stock_df, total_value, balance, market_value = update_holding_position(date_str_i,row,firstStock,secondStock,holding_stock_df,commition,balance)
         trade_record = pd.concat([history_stock_df, holding_stock_df])
-        account.loc[date_str_i, ["total_value", "market_value", "balance"]] = total_value, market_value, balance
-    trade_record.to_csv(r"E:\高频交易\data\correlation_higher_than_0.9\trade_record\trade_record.csv")
-    account.to_csv(r"E:\高频交易\data\correlation_higher_than_0.9\trade_record\account.csv")
+        account.loc[date_str_i, ["total_value","market_value","balance"]] = total_value,market_value,balance
+        # account.at[date_str_i,  "market_value"] =  market_value
+        # account.at[date_str_i,  "balance"] =  balance
+    trade_record.to_csv(r"F:\python_project\highFrequency\data\xiezheng\correlation_higher_than_0.9\trade_record\trade_record.csv")
+    account.to_csv(r"F:\python_project\highFrequency\data\xiezheng\correlation_higher_than_0.9\trade_record\account.csv")
 
 def open_new_position(first_stock_direction,second_stock_direction,date_str_i,beta,row,firstStock,secondStock,commition,holding_df,balance):
     amount = balance // ((beta * 100 * row[firstStock] + 100 * row[secondStock]) * (1 + commition))
@@ -121,8 +123,6 @@ def open_new_position(first_stock_direction,second_stock_direction,date_str_i,be
         total_value = balance+market_value
         holding_df = holding_df.append(trade_record_dict, ignore_index=True)
     return holding_df,total_value,balance,market_value
-
-
 
 def close_holding_position(date_str_i,row,firstStock,secondStock,commition,holding_df,tax,balance):
     for stock_name in [firstStock, secondStock]:
@@ -174,8 +174,8 @@ def update_holding_position(date_str_i,row,firstStock,secondStock,holding_df,com
     return holding_df, total_value, balance, total_market_value
 
 def caculateMspreadDivideStd(threshold):
-    Mspread_df = pd.read_csv(r"E:\高频交易\data\correlation_higher_than_{}\spread\spread.csv".format(threshold),index_col=0)
-    std = caculateStd(Mspread_df["Mspread"])
+    Mspread_df = pd.read_csv(r"F:\python_project\highFrequency\data\xiezheng\correlation_higher_than_{}\spread\600000.XSHG_601336.XSHG_spread.csv".format(threshold),index_col=0)
+    std = caculateStd(Mspread_df["Mspread"].loc["2021-10-08 09:35:00":"2022-04-06 15:00:00"])
     return std
 
 def caculateStd(ser):
